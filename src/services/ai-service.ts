@@ -1,0 +1,46 @@
+import OpenAI from "openai";
+
+interface OpenAIResponse {
+  data: {
+    choices: Array<{
+      message: {
+        content: string;
+      };
+    }>;
+  };
+}
+
+/**
+ * Analisa o sentimento de um texto usando a API da OpenAI
+ */
+export const analyzeSentiment = async (text: string): Promise<string> => {
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      store: true,
+      messages: [
+        {
+          role: 'system',
+          content: 'Você é um analisador de sentimento. Analise o sentimento do texto fornecido e responda apenas com uma das seguintes categorias: "positivo", "negativo" ou "neutro", seguido de uma breve justificativa em até 20 palavras.'
+        },
+        {
+          role: 'user',
+          content: text
+        }
+      ],
+      temperature: 0.3,
+      max_tokens: 50
+    });
+    
+    const response = completion as unknown as OpenAIResponse;
+    const sentiment = response.data.choices[0].message.content;
+    return sentiment;
+  } catch (error) {
+    console.error('Erro ao analisar sentimento:', error instanceof Error ? error.message : String(error));
+    return 'Não foi possível analisar o sentimento';
+  }
+};
