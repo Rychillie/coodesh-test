@@ -5,32 +5,30 @@ import { FrequentWord } from '../types';
 const tokenizer = new natural.WordTokenizer();
 
 /**
- * Conta o número de palavras em um texto
+ * Counts the number of words in a text
  */
 export const countWords = (text: string): number => {
   const tokens = tokenizer.tokenize(text);
-  return tokens?.length || 0; // Adicionado operador de coalescência nula
+  return tokens?.length || 0;
 };
 
 /**
- * Obtém as palavras mais frequentes em um texto
+ * Gets the most frequent words in a text
  */
 export const getFrequentWords = (text: string, count: number = 5): FrequentWord[] => {
-  // Tokenizar o texto
+  // Tokenize the text
   const tokens = tokenizer.tokenize(text.toLowerCase()) || [];
   
-  // Remover stopwords - corrigindo o tipo
-  // @ts-ignore - Ignorando o erro de tipo para natural.stopwords.removeStopwords
-  console.log("tokens: ", tokens);
+  // Remove stopwords
   const filteredTokens = removeStopwords(tokens) || [];
   
-  // Contar frequência
+  // Count frequency
   const frequency: Record<string, number> = {};
-  filteredTokens.forEach((word: string) => { // Adicionado tipo explícito
+  filteredTokens.forEach((word: string) => {
     frequency[word] = (frequency[word] || 0) + 1;
   });
   
-  // Ordenar por frequência e retornar os N mais frequentes
+  // Sort by frequency and return the top N
   return Object.entries(frequency)
     .sort((a, b) => b[1] - a[1])
     .slice(0, count)
@@ -38,7 +36,7 @@ export const getFrequentWords = (text: string, count: number = 5): FrequentWord[
 };
 
 /**
- * Busca um termo em um texto
+ * Searches for a term in a text
  */
 export const searchTermInText = (text: string, term: string): boolean => {
   const regex = new RegExp(`\\b${term}\\b`, 'i');

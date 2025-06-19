@@ -5,11 +5,14 @@ import express, { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import textRoutes from './routes/text-routes';
+import { setupSwagger } from './swagger';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+setupSwagger(app);
 
 // Middlewares
 app.use(cors());

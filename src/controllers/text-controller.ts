@@ -3,29 +3,29 @@ import * as aiService from '../services/ai-service';
 import * as textService from '../services/text-service';
 import { TextAnalysis } from '../types';
 
-// Armazenamento em memória para o histórico (poderia ser substituído por SQLite)
+// In-memory storage for the last analysis (could be replaced by SQLite)
 let lastAnalysis: TextAnalysis | null = null;
 
 /**
- * Analisa um texto fornecido
+ * Analyzes a provided text
  */
 export const analyzeText = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { text } = req.body;
     
     if (!text || typeof text !== 'string') {
-      res.status(400).json({ error: 'Texto inválido ou não fornecido' });
+      res.status(400).json({ error: 'Invalid or missing text' });
       return;
     }
 
-    // Análise de estatísticas básicas
+    // Basic statistics analysis
     const wordCount = textService.countWords(text);
     const frequentWords = textService.getFrequentWords(text, 5);
     
-    // Análise de sentimento usando IA
+    // Sentiment analysis using AI
     const sentiment = await aiService.analyzeSentiment(text);
     
-    // Armazenar resultado para consulta posterior
+    // Store result for later queries
     lastAnalysis = {
       text,
       wordCount,
@@ -34,7 +34,7 @@ export const analyzeText = async (req: Request, res: Response, next: NextFunctio
       timestamp: new Date()
     };
     
-    // Retornar resultado
+    // Return result
     res.status(200).json({
       wordCount,
       frequentWords,
@@ -46,19 +46,19 @@ export const analyzeText = async (req: Request, res: Response, next: NextFunctio
 };
 
 /**
- * Busca um termo na última análise
+ * Searches for a term in the last analysis
  */
 export const searchTerm = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const { term } = req.query;
     
     if (!term || typeof term !== 'string') {
-      res.status(400).json({ error: 'Termo de busca não fornecido' });
+      res.status(400).json({ error: 'Search term not provided' });
       return;
     }
     
     if (!lastAnalysis) {
-      res.status(404).json({ error: 'Nenhuma análise prévia encontrada' });
+      res.status(404).json({ error: 'No previous analysis found' });
       return;
     }
     

@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 
 /**
- * Analisa o sentimento de um texto usando a API da OpenAI
+ * Analyzes the sentiment of a text using the OpenAI API
  */
 export const analyzeSentiment = async (text: string): Promise<string> => {
   const openai = new OpenAI({
@@ -14,7 +14,7 @@ export const analyzeSentiment = async (text: string): Promise<string> => {
       messages: [
         {
           role: 'system',
-          content: 'Você é um analisador de sentimento. Analise o sentimento do texto fornecido e responda apenas com uma das seguintes categorias: "positivo", "negativo" ou "neutro", seguido de uma breve justificativa em até 20 palavras.'
+          content: 'You are a sentiment analyzer. Analyze the sentiment of the provided text and respond only with one of the following categories: "positive", "negative", or "neutral", followed by a brief justification of up to 20 words.'
         },
         {
           role: 'user',
@@ -25,12 +25,12 @@ export const analyzeSentiment = async (text: string): Promise<string> => {
       max_tokens: 50
     });
     
-    // Acesso correto à resposta da OpenAI
-    const sentiment = completion.choices[0]?.message?.content || 'Não foi possível analisar o sentimento';
+    // Correct access to OpenAI response
+    const sentiment = completion.choices[0]?.message?.content || 'Sentiment analysis failed';
     return sentiment;
     
   } catch (error) {
-    console.error('Erro ao analisar sentimento:', error instanceof Error ? error.message : String(error));
-    return 'Não foi possível analisar o sentimento';
+    console.error('Error analyzing sentiment:', error instanceof Error ? error.message : String(error));
+    return 'Sentiment analysis failed';
   }
 };
