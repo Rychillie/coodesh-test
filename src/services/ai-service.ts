@@ -1,15 +1,5 @@
 import OpenAI from "openai";
 
-interface OpenAIResponse {
-  data: {
-    choices: Array<{
-      message: {
-        content: string;
-      };
-    }>;
-  };
-}
-
 /**
  * Analisa o sentimento de um texto usando a API da OpenAI
  */
@@ -21,7 +11,6 @@ export const analyzeSentiment = async (text: string): Promise<string> => {
   try {
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
-      store: true,
       messages: [
         {
           role: 'system',
@@ -36,9 +25,10 @@ export const analyzeSentiment = async (text: string): Promise<string> => {
       max_tokens: 50
     });
     
-    const response = completion as unknown as OpenAIResponse;
-    const sentiment = response.data.choices[0].message.content;
+    // Acesso correto à resposta da OpenAI
+    const sentiment = completion.choices[0]?.message?.content || 'Não foi possível analisar o sentimento';
     return sentiment;
+    
   } catch (error) {
     console.error('Erro ao analisar sentimento:', error instanceof Error ? error.message : String(error));
     return 'Não foi possível analisar o sentimento';
